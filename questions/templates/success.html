@@ -1,0 +1,26 @@
+<table>
+    <thead>
+        <tr>
+            <th>type</th>
+            <th>questions</th>
+            <th>C</th>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        {% for d in data %}
+        <tr>
+            <td>{{ d.type }}</td>
+            <td>{{ d.questions }}</td>
+            <td>{{ d.correct }}</td>
+            <td>{{ d.wrong1 }}</td>
+            <td>{{ d.wrong2 }}</td>
+            <td>{{ d.wrong3 }}</td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

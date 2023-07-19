@@ -1,7 +1,7 @@
 
 import csv
 from django.shortcuts import render
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView ,ListCreateAPIView
 # Create your views here.
 
 from .models import QuestionsData
@@ -9,11 +9,15 @@ from .serializers import QuestionsDataSerializer
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import UploadForm
 from django.http import HttpResponse
-
+import io
 
 class QuestionsDataDetailView(RetrieveUpdateDestroyAPIView):
     queryset = QuestionsData.objects.all()
     serializer_class = QuestionsDataSerializer
+
+class QuestionsDataListView(ListCreateAPIView):
+    queryset=QuestionsData.objects.all()
+    serializer_class= QuestionsDataSerializer
 
 
 def upload_csv(request):
@@ -21,23 +25,31 @@ def upload_csv(request):
         form = UploadForm(request.POST, request.FILES)
         if form.is_valid():
             csv_file = request.FILES['csv_file']
-            decoded_file = csv_file.read().decode('utf-8')
+            decoded_file = csv_file.read().decode('windows-1256')
             io_string = io.StringIO(decoded_file)
             next(io_string)  # Skip the header row
-
+            data = []
             for row in csv.reader(io_string):
-                type, questions,correct,wrong1,wrong2,wrong3= row
+                type, questions ,correct,wrong1,wrong2,wrong3= row
                 QuestionsData.objects.create(type=type, questions=questions,correct=correct,wrong1=wrong1,wrong2=wrong2,wrong3=wrong3)
-
-            return render(request, 'success.html')
+                data.append({'type':type,'questions':questions,'correct':correct,'wrong1':wrong1,'wrong2':wrong2,'wrong3':wrong3})
+            
+            return render(request, 'success.html' ,{'data':data} )
     else:
         form = UploadForm()
     
     return render(request, 'upload.html', {'form': form})
 
 
+
+
+
+
+
+
+
 def download_csv(request):
-    response = HttpResponse(content_type='text/csv')
+    response = HttpResponse(content_type='text/csv; windows-1256 charset=utf-8')
     response['Content-Disposition'] = 'attachment; filename="data.csv"'
 
     writer = csv.writer(response)
@@ -48,3 +60,6 @@ def download_csv(request):
         writer.writerow([my_model.type, my_model.questions,my_model.correct,my_model.wrong1,my_model.wrong2,my_model.wrong3])
 
     return response
+
+
+
