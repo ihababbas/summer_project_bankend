@@ -1,0 +1,84 @@
+<table>
+    <thead>
+        <tr>
+            <th>type</th>
+            <th>questions</th>
+            <th>C</th>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        {% for d in random_questions %}
+        <tr>
+            <td>{{ d.type }}</td>
+            <td>{{ d.questions }}</td>
+            <td>{{ d.correct }}</td>
+            <td>{{ d.wrong1 }}</td>
+            <td>{{ d.wrong2 }}</td>
+            <td>{{ d.wrong3 }}</td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>group1</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>type</th>
+            <th>questions</th>
+            <th>C</th>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        {% for d in group1 %}
+        <tr>
+            <td>{{ d.type }}</td>
+            <td>{{ d.questions }}</td>
+            <td>{{ d.correct }}</td>
+            <td>{{ d.wrong1 }}</td>
+            <td>{{ d.wrong2 }}</td>
+            <td>{{ d.wrong3 }}</td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br>
+<br>
+<h2>group2</h2>
+<table>
+    <thead>
+        <tr>
+            <th>type</th>
+            <th>questions</th>
+            <th>C</th>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        {% for d in group2 %}
+        <tr>
+            <td>{{ d.type }}</td>
+            <td>{{ d.questions }}</td>
+            <td>{{ d.correct }}</td>
+            <td>{{ d.wrong1 }}</td>
+            <td>{{ d.wrong2 }}</td>
+            <td>{{ d.wrong3 }}</td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

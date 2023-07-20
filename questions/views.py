@@ -7,7 +7,8 @@ from .models import QuestionsData
 from .serializers import QuestionsDataSerializer
 from .forms import UploadForm
 from django.http import HttpResponse
-import io
+import io 
+import random
 
 class QuestionsDataDetailView(RetrieveUpdateDestroyAPIView):
     """
@@ -55,7 +56,7 @@ def upload_csv(request):
             csv_file = request.FILES['csv_file']
             decoded_file = csv_file.read().decode('utf-8')
             io_string = io.StringIO(decoded_file)
-            next(io_string)  # Skip the header row
+            next(io_string)  
             data = []
             for row in csv.reader(io_string):
                 type, questions ,correct,wrong1,wrong2,wrong3= row
@@ -116,7 +117,66 @@ def clear_all_data(request):
     return HttpResponse("All data has been cleared from the database.")
 
 
+def get_random_questions(request):
+    """
 
+    Retrieve 10 random questions from the database.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The HTTP response for the view containing the selected random questions.
+
+   
+    """
+    # Fetch all questions from the database
+
+    all_questions = QuestionsData.objects.all()
+
+    # Check if there are at least 10 questions in the database
+    if all_questions.count() >= 10:
+        # Select 10 random questions from the queryset
+        random_questions = random.sample(list(all_questions), 10)
+    else:
+        # If there are less than 10 questions in the database, set random_questions to all available questions
+        random_questions = all_questions
+
+    # Your view logic here...
+    return render(request, 'random_questions_template.html', {'random_questions':random_questions})
+
+
+def get_50_random_questions(request):
+    """
+    Retrieve 50 random questions from the database, divided into two equal groups.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The HTTP response for the view containing the selected random questions.
+
+
+    """
+    # Fetch all questions from the database
+    all_questions = QuestionsData.objects.all()
+
+    # Check if there are at least 50 questions in the database
+    if all_questions.count() >= 50:
+        # Select 50 random questions from the queryset
+        random_questions = random.sample(list(all_questions), 50)
+
+        # Divide the randomly selected questions into two equal groups
+        middle_index = len(random_questions) // 2
+        group1 = random_questions[:middle_index]
+        group2 = random_questions[middle_index:]
+    else:
+        # If there are less than 50 questions in the database, set group1 and group2 to all available questions
+        group1 = all_questions
+        group2 = all_questions
+
+    # Your view logic here...
+    return render(request, 'random_questions_template.html', {'group1': group1, 'group2': group2})
 
 
 
@@ -125,11 +185,11 @@ def clear_all_data(request):
 #     # Check if the form has been submitted (POST method)
 #     if request.method == 'POST':
 #         # Create an instance of the UploadForm, using the form data from the request
-
 #         form = UploadForm(request.POST, request.FILES)
-#         # Check if the form data is valid
 
+#         # Check if the form data is valid
 #         if form.is_valid():
+
 #             # Retrieve the uploaded CSV file from the form
 #             csv_file = request.FILES['csv_file']
 
