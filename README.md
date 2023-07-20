@@ -37,13 +37,13 @@ With captivating questions and diverse challenges, this game will keep you engag
           python manage.py migrate
 5. create the model to use in this game that will contain [type,question,correct, wrong1 ,wrong2 , wrong3]
 6. fix the views and the urls:
-         - QuestionsDataListView: A view for listing and creating QuestionsData objects.
+    - QuestionsDataListView: A view for listing and creating QuestionsData objects.
          url:(api/v1/QC/questions/)
-         - QuestionsDataDetailView: A view for listing and creating QuestionsData objects.
+    - QuestionsDataDetailView: A view for listing and creating QuestionsData objects.
          url: (api/v1/QC/ question/<int:pk>)
-         - upload_csv: Handle the CSV file upload and save data to the database.
+    - upload_csv: Handle the CSV file upload and save data to the database.
          url: (api/v1/QC/upload)
-         - download_csv: Download CSV file containing QuestionsData.
+    - download_csv: Download CSV file containing QuestionsData.
          url:(api/v1/QC/download)
-         - clear_all_data(request): Clear all data from the database
+    - clear_all_data(request): Clear all data from the database
          url: (api/v1/QC/clear)
