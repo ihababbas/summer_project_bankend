@@ -1,6 +1,6 @@
 
 import csv
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render
 from rest_framework.generics import RetrieveUpdateDestroyAPIView ,ListCreateAPIView
 # Create your views here.
 from .models import QuestionsData
@@ -100,7 +100,20 @@ def download_csv(request):
     return response
 
 
+def clear_all_data(request):
+    """
+    Clear all data from the database.
 
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: A response indicating the success of the operation.
+    """
+    QuestionsData.objects.all().delete()
+
+    # Return a response to indicate the success of the operation
+    return HttpResponse("All data has been cleared from the database.")
 
 
 
