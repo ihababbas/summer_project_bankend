@@ -30,9 +30,9 @@ With captivating questions and diverse challenges, this game will keep you engag
        *python manage.py startapp questions*
 3. create a superuser
        *python manage.py createsuperuser*
-       username: admin
-       email: admin@admin.com
-       password: admin123
+    - username: admin
+    - email: admin@admin.com
+    - password: admin123
 4. do python manage.py makemigrations
           python manage.py migrate
 5. create the model to use in this game that will contain [type,question,correct, wrong1 ,wrong2 , wrong3]
