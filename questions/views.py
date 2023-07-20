@@ -1,12 +1,10 @@
 
 import csv
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from rest_framework.generics import RetrieveUpdateDestroyAPIView ,ListCreateAPIView
 # Create your views here.
-
 from .models import QuestionsData
 from .serializers import QuestionsDataSerializer
-from django.shortcuts import render, get_object_or_404, redirect
 from .forms import UploadForm
 from django.http import HttpResponse
 import io
@@ -25,7 +23,7 @@ def upload_csv(request):
         form = UploadForm(request.POST, request.FILES)
         if form.is_valid():
             csv_file = request.FILES['csv_file']
-            decoded_file = csv_file.read().decode('windows-1256')
+            decoded_file = csv_file.read().decode('utf-8')
             io_string = io.StringIO(decoded_file)
             next(io_string)  # Skip the header row
             data = []
