@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Types and Counts</title>
+</head>
+<body>
+    <h1>Types and Counts:</h1>
+    <ul>
+        {% for type, count in type_count_list %}
+        <li>{{ type }} - {{ count }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

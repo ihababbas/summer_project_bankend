@@ -9,6 +9,7 @@ from .forms import UploadForm
 from django.http import HttpResponse
 import io 
 import random
+from collections import Counter
 
 class QuestionsDataDetailView(RetrieveUpdateDestroyAPIView):
     """
@@ -180,50 +181,33 @@ def get_50_random_questions(request):
 
 
 
+def display_types_and_count(request):
+    """
+    Display the types available in the database and count how many times each type is repeated.
 
-# def upload_csv(request):
-#     # Check if the form has been submitted (POST method)
-#     if request.method == 'POST':
-#         # Create an instance of the UploadForm, using the form data from the request
-#         form = UploadForm(request.POST, request.FILES)
+    Args:
+        request (HttpRequest): The HTTP request object.
 
-#         # Check if the form data is valid
-#         if form.is_valid():
+    Returns:
+        HttpResponse: The HTTP response for the view containing the types and their counts.
 
-#             # Retrieve the uploaded CSV file from the form
-#             csv_file = request.FILES['csv_file']
+    Note:
+        - Make sure to include appropriate URL patterns to associate this view with the
+          desired endpoint in your project's urls.py file.
+    """
+    # Fetch all questions from the database
+    all_questions = QuestionsData.objects.all()
 
-#             # Decode the CSV file content from bytes to a string using utf-8 encoding
-#             decoded_file = csv_file.read().decode('utf-8')
+    # Extract the type field from each question and create a list of types
+    types_list = [question.type for question in all_questions]
 
-#             # Create a StringIO object to read the decoded CSV content line by line
-#             io_string = io.StringIO(decoded_file)
+    # Use Counter to count the occurrences of each type
+    type_counts = Counter(types_list)
 
-#             # Skip the header row (first row) since it contains column names
-#             next(io_string)
+    # Convert the Counter object to a list of tuples (type, count)
+    type_count_list = list(type_counts.items())
+    # Your view logic here...
+    return render(request, 'types_and_count_template.html', {'type_count_list': type_count_list})
+    
 
-#             # Initialize an empty list to store the data from each row of the CSV file
-#             data = []
 
-#             # Iterate over each row in the CSV file
-#             for row in csv.reader(io_string):
-
-#                 # Extract the 'name' and 'email' values from the current row
-#                 name, email = row
-
-#                 # Create a MyModel object with the extracted data and save it to the database
-#                 MyModel.objects.create(name=name, email=email)
-
-#                 # Append the 'name' and 'email' values to the 'data' list for later use
-#                 data.append({'name': name, 'email': email})
-
-#             # After processing all rows, render the 'success.html' template
-#             # and pass the 'data' list as a context variable for displaying the uploaded data
-#             return render(request, 'success.html', {'data': data})
-
-#     else:
-#         # If the form hasn't been submitted (GET method), create an empty instance of the UploadForm
-#         form = UploadForm()
-
-#     # Render the 'upload.html' template with the UploadForm instance for displaying the upload form
-#     return render(request, 'upload.html', {'form': form})
