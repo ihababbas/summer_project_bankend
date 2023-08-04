@@ -10,6 +10,10 @@ from django.http import HttpResponse
 import io 
 import random
 from collections import Counter
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.views import APIView
+from django.http import JsonResponse
 
 class QuestionsDataDetailView(RetrieveUpdateDestroyAPIView):
     """
@@ -118,21 +122,24 @@ def clear_all_data(request):
     return HttpResponse("All data has been cleared from the database.")
 
 
+from django.http import JsonResponse
+import random
+
+from django.http import JsonResponse
+import random
+from .models import QuestionsData
+
 def get_random_questions(request):
     """
-
     Retrieve 10 random questions from the database.
 
     Args:
         request (HttpRequest): The HTTP request object.
 
     Returns:
-        HttpResponse: The HTTP response for the view containing the selected random questions.
-
-   
+        JsonResponse: The JSON response containing the selected random questions.
     """
     # Fetch all questions from the database
-
     all_questions = QuestionsData.objects.all()
 
     # Check if there are at least 10 questions in the database
@@ -143,8 +150,25 @@ def get_random_questions(request):
         # If there are less than 10 questions in the database, set random_questions to all available questions
         random_questions = all_questions
 
-    # Your view logic here...
-    return render(request, 'random_questions_template.html', {'random_questions':random_questions})
+    # Serialize the questions to JSON
+    serialized_questions = [
+        {
+            'type': question.type,
+            'question': question.questions,
+            'options': [
+                {'text': question.correct, 'is_correct': True},
+                {'text': question.wrong1, 'is_correct': False},
+                {'text': question.wrong2, 'is_correct': False},
+                {'text': question.wrong3, 'is_correct': False},
+            ]
+        }
+        for question in random_questions
+    ]
+
+    # Return the JSON response
+    return JsonResponse(serialized_questions, safe=False, json_dumps_params={'ensure_ascii': False})
+
+
 
 
 def get_50_random_questions(request):
@@ -211,3 +235,41 @@ def display_types_and_count(request):
     
 
 
+class QuestionsDataView(APIView):
+    def post(self, request):
+        serializer = QuestionsDataSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    
+    
+# def get_random_questions(request):
+#     """
+
+#     Retrieve 10 random questions from the database.
+
+#     Args:
+#         request (HttpRequest): The HTTP request object.
+
+#     Returns:
+#         HttpResponse: The HTTP response for the view containing the selected random questions.
+
+   
+#     """
+#     # Fetch all questions from the database
+
+#     all_questions = QuestionsData.objects.all()
+
+#     # Check if there are at least 10 questions in the database
+#     if all_questions.count() >= 10:
+#         # Select 10 random questions from the queryset
+#         random_questions = random.sample(list(all_questions), 10)
+#     else:
+#         # If there are less than 10 questions in the database, set random_questions to all available questions
+#         random_questions = all_questions
+
+#     # Your view logic here...
+#     return render(request, 'random_questions_template.html', {'random_questions':random_questions})
