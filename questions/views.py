@@ -171,7 +171,39 @@ def get_random_questions(request):
 
 
 
-def get_50_random_questions(request):
+# def get_50_random_questions(request):
+#     """
+#     Retrieve 50 random questions from the database, divided into two equal groups.
+
+#     Args:
+#         request (HttpRequest): The HTTP request object.
+
+#     Returns:
+#         HttpResponse: The HTTP response for the view containing the selected random questions.
+
+
+#     """
+#     # Fetch all questions from the database
+#     all_questions = QuestionsData.objects.all()
+
+#     # Check if there are at least 50 questions in the database
+#     if all_questions.count() >= 50:
+#         # Select 50 random questions from the queryset
+#         random_questions = random.sample(list(all_questions), 50)
+
+#         # Divide the randomly selected questions into two equal groups
+#         middle_index = len(random_questions) // 2
+#         group1 = random_questions[:middle_index]
+#         group2 = random_questions[middle_index:]
+#     else:
+#         # If there are less than 50 questions in the database, set group1 and group2 to all available questions
+#         group1 = all_questions
+#         group2 = all_questions
+
+#     # Your view logic here...
+#     return render(request, 'random_questions_template.html', {'group1': group1, 'group2': group2})
+
+def get_random_50_questions(request):
     """
     Retrieve 50 random questions from the database, divided into two equal groups.
 
@@ -179,9 +211,7 @@ def get_50_random_questions(request):
         request (HttpRequest): The HTTP request object.
 
     Returns:
-        HttpResponse: The HTTP response for the view containing the selected random questions.
-
-
+        JsonResponse: The JSON response containing the two groups of selected random questions.
     """
     # Fetch all questions from the database
     all_questions = QuestionsData.objects.all()
@@ -190,18 +220,46 @@ def get_50_random_questions(request):
     if all_questions.count() >= 50:
         # Select 50 random questions from the queryset
         random_questions = random.sample(list(all_questions), 50)
-
-        # Divide the randomly selected questions into two equal groups
-        middle_index = len(random_questions) // 2
-        group1 = random_questions[:middle_index]
-        group2 = random_questions[middle_index:]
     else:
-        # If there are less than 50 questions in the database, set group1 and group2 to all available questions
-        group1 = all_questions
-        group2 = all_questions
+        # If there are less than 50 questions in the database, set random_questions to all available questions
+        random_questions = all_questions
 
-    # Your view logic here...
-    return render(request, 'random_questions_template.html', {'group1': group1, 'group2': group2})
+    # Divide the randomly selected questions into two equal groups
+    middle_index = len(random_questions) // 2
+    group1 = random_questions[:middle_index]
+    group2 = random_questions[middle_index:]
+
+    # Serialize each group of questions to JSON
+    serialized_group1 = [
+        {
+            'type': question.type,
+            'question': question.questions,
+            'options': [
+                {'text': question.correct, 'is_correct': True},
+                {'text': question.wrong1, 'is_correct': False},
+                {'text': question.wrong2, 'is_correct': False},
+                {'text': question.wrong3, 'is_correct': False},
+            ]
+        }
+        for question in group1
+    ]
+
+    serialized_group2 = [
+        {
+            'type': question.type,
+            'question': question.questions,
+            'options': [
+                {'text': question.correct, 'is_correct': True},
+                {'text': question.wrong1, 'is_correct': False},
+                {'text': question.wrong2, 'is_correct': False},
+                {'text': question.wrong3, 'is_correct': False},
+            ]
+        }
+        for question in group2
+    ]
+
+    # Return the JSON response containing the two groups of questions
+    return JsonResponse({'group1': serialized_group1, 'group2': serialized_group2}, safe=False, json_dumps_params={'ensure_ascii': False})
 
 
 
